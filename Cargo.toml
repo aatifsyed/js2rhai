@@ -6,3 +6,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+boa_ast = "0.17.0"
+boa_interner = "0.17.0"
+boa_parser = "0.17.0"
