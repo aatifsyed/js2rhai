@@ -34,21 +34,21 @@ use boa_interner::Sym;
 use std::ops::ControlFlow;
 
 impl<'ast, 'a> boa_ast::visitor::Visitor<'ast> for MyVisitor<'a> {
-    type BreakTy = ();
+    type BreakTy = &'static str;
 
     #[doc = concat!("Visits a `",stringify!(Script),"` with this visitor")]
     fn visit_script(&mut self, node: &'ast Script) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Script>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Module),"` with this visitor")]
     fn visit_module(&mut self, node: &'ast Module) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Module>())
     }
 
     #[doc = concat!("Visits a `",stringify!(StatementList),"` with this visitor")]
     fn visit_statement_list(&mut self, node: &'ast StatementList) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<StatementList>())
     }
 
     #[doc = concat!("Visits a `",stringify!(StatementListItem),"` with this visitor")]
@@ -56,42 +56,42 @@ impl<'ast, 'a> boa_ast::visitor::Visitor<'ast> for MyVisitor<'a> {
         &mut self,
         node: &'ast StatementListItem,
     ) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<StatementListItem>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Statement),"` with this visitor")]
     fn visit_statement(&mut self, node: &'ast Statement) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Statement>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Declaration),"` with this visitor")]
     fn visit_declaration(&mut self, node: &'ast Declaration) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Declaration>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Function),"` with this visitor")]
     fn visit_function(&mut self, node: &'ast Function) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Function>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Generator),"` with this visitor")]
     fn visit_generator(&mut self, node: &'ast Generator) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Generator>())
     }
 
     #[doc = concat!("Visits a `",stringify!(AsyncFunction),"` with this visitor")]
     fn visit_async_function(&mut self, node: &'ast AsyncFunction) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<AsyncFunction>())
     }
 
     #[doc = concat!("Visits a `",stringify!(AsyncGenerator),"` with this visitor")]
     fn visit_async_generator(&mut self, node: &'ast AsyncGenerator) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<AsyncGenerator>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Class),"` with this visitor")]
     fn visit_class(&mut self, node: &'ast Class) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Class>())
     }
 
     #[doc = concat!("Visits a `",stringify!(LexicalDeclaration),"` with this visitor")]
@@ -99,97 +99,97 @@ impl<'ast, 'a> boa_ast::visitor::Visitor<'ast> for MyVisitor<'a> {
         &mut self,
         node: &'ast LexicalDeclaration,
     ) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<LexicalDeclaration>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Block),"` with this visitor")]
     fn visit_block(&mut self, node: &'ast Block) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Block>())
     }
 
     #[doc = concat!("Visits a `",stringify!(VarDeclaration),"` with this visitor")]
     fn visit_var_declaration(&mut self, node: &'ast VarDeclaration) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<VarDeclaration>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Expression),"` with this visitor")]
     fn visit_expression(&mut self, node: &'ast Expression) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Expression>())
     }
 
     #[doc = concat!("Visits a `",stringify!(If),"` with this visitor")]
     fn visit_if(&mut self, node: &'ast If) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<If>())
     }
 
     #[doc = concat!("Visits a `",stringify!(DoWhileLoop),"` with this visitor")]
     fn visit_do_while_loop(&mut self, node: &'ast DoWhileLoop) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<DoWhileLoop>())
     }
 
     #[doc = concat!("Visits a `",stringify!(WhileLoop),"` with this visitor")]
     fn visit_while_loop(&mut self, node: &'ast WhileLoop) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<WhileLoop>())
     }
 
     #[doc = concat!("Visits a `",stringify!(ForLoop),"` with this visitor")]
     fn visit_for_loop(&mut self, node: &'ast ForLoop) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<ForLoop>())
     }
 
     #[doc = concat!("Visits a `",stringify!(ForInLoop),"` with this visitor")]
     fn visit_for_in_loop(&mut self, node: &'ast ForInLoop) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<ForInLoop>())
     }
 
     #[doc = concat!("Visits a `",stringify!(ForOfLoop),"` with this visitor")]
     fn visit_for_of_loop(&mut self, node: &'ast ForOfLoop) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<ForOfLoop>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Switch),"` with this visitor")]
     fn visit_switch(&mut self, node: &'ast Switch) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Switch>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Continue),"` with this visitor")]
     fn visit_continue(&mut self, node: &'ast Continue) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Continue>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Break),"` with this visitor")]
     fn visit_break(&mut self, node: &'ast Break) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Break>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Return),"` with this visitor")]
     fn visit_return(&mut self, node: &'ast Return) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Return>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Labelled),"` with this visitor")]
     fn visit_labelled(&mut self, node: &'ast Labelled) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Labelled>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Throw),"` with this visitor")]
     fn visit_throw(&mut self, node: &'ast Throw) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Throw>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Try),"` with this visitor")]
     fn visit_try(&mut self, node: &'ast Try) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Try>())
     }
 
     #[doc = concat!("Visits a `",stringify!(With),"` with this visitor")]
     fn visit_with(&mut self, node: &'ast With) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<With>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Identifier),"` with this visitor")]
     fn visit_identifier(&mut self, node: &'ast Identifier) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Identifier>())
     }
 
     #[doc = concat!("Visits a `",stringify!(FormalParameterList),"` with this visitor")]
@@ -197,62 +197,62 @@ impl<'ast, 'a> boa_ast::visitor::Visitor<'ast> for MyVisitor<'a> {
         &mut self,
         node: &'ast FormalParameterList,
     ) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<FormalParameterList>())
     }
 
     #[doc = concat!("Visits a `",stringify!(ClassElement),"` with this visitor")]
     fn visit_class_element(&mut self, node: &'ast ClassElement) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<ClassElement>())
     }
 
     #[doc = concat!("Visits a `",stringify!(PrivateName),"` with this visitor")]
     fn visit_private_name(&mut self, node: &'ast PrivateName) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<PrivateName>())
     }
 
     #[doc = concat!("Visits a `",stringify!(VariableList),"` with this visitor")]
     fn visit_variable_list(&mut self, node: &'ast VariableList) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<VariableList>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Variable),"` with this visitor")]
     fn visit_variable(&mut self, node: &'ast Variable) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Variable>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Binding),"` with this visitor")]
     fn visit_binding(&mut self, node: &'ast Binding) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Binding>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Pattern),"` with this visitor")]
     fn visit_pattern(&mut self, node: &'ast Pattern) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Pattern>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Literal),"` with this visitor")]
     fn visit_literal(&mut self, node: &'ast Literal) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Literal>())
     }
 
     #[doc = concat!("Visits a `",stringify!(ArrayLiteral),"` with this visitor")]
     fn visit_array_literal(&mut self, node: &'ast ArrayLiteral) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<ArrayLiteral>())
     }
 
     #[doc = concat!("Visits a `",stringify!(ObjectLiteral),"` with this visitor")]
     fn visit_object_literal(&mut self, node: &'ast ObjectLiteral) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<ObjectLiteral>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Spread),"` with this visitor")]
     fn visit_spread(&mut self, node: &'ast Spread) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Spread>())
     }
 
     #[doc = concat!("Visits a `",stringify!(ArrowFunction),"` with this visitor")]
     fn visit_arrow_function(&mut self, node: &'ast ArrowFunction) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<ArrowFunction>())
     }
 
     #[doc = concat!("Visits a `",stringify!(AsyncArrowFunction),"` with this visitor")]
@@ -260,7 +260,7 @@ impl<'ast, 'a> boa_ast::visitor::Visitor<'ast> for MyVisitor<'a> {
         &mut self,
         node: &'ast AsyncArrowFunction,
     ) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<AsyncArrowFunction>())
     }
 
     #[doc = concat!("Visits a `",stringify!(TemplateLiteral),"` with this visitor")]
@@ -268,62 +268,62 @@ impl<'ast, 'a> boa_ast::visitor::Visitor<'ast> for MyVisitor<'a> {
         &mut self,
         node: &'ast TemplateLiteral,
     ) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<TemplateLiteral>())
     }
 
     #[doc = concat!("Visits a `",stringify!(PropertyAccess),"` with this visitor")]
     fn visit_property_access(&mut self, node: &'ast PropertyAccess) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<PropertyAccess>())
     }
 
     #[doc = concat!("Visits a `",stringify!(New),"` with this visitor")]
     fn visit_new(&mut self, node: &'ast New) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<New>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Call),"` with this visitor")]
     fn visit_call(&mut self, node: &'ast Call) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Call>())
     }
 
     #[doc = concat!("Visits a `",stringify!(SuperCall),"` with this visitor")]
     fn visit_super_call(&mut self, node: &'ast SuperCall) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<SuperCall>())
     }
 
     #[doc = concat!("Visits a `",stringify!(ImportCall),"` with this visitor")]
     fn visit_import_call(&mut self, node: &'ast ImportCall) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<ImportCall>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Optional),"` with this visitor")]
     fn visit_optional(&mut self, node: &'ast Optional) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Optional>())
     }
 
     #[doc = concat!("Visits a `",stringify!(TaggedTemplate),"` with this visitor")]
     fn visit_tagged_template(&mut self, node: &'ast TaggedTemplate) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<TaggedTemplate>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Assign),"` with this visitor")]
     fn visit_assign(&mut self, node: &'ast Assign) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Assign>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Unary),"` with this visitor")]
     fn visit_unary(&mut self, node: &'ast Unary) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Unary>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Update),"` with this visitor")]
     fn visit_update(&mut self, node: &'ast Update) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Update>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Binary),"` with this visitor")]
     fn visit_binary(&mut self, node: &'ast Binary) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Binary>())
     }
 
     #[doc = concat!("Visits a `",stringify!(BinaryInPrivate),"` with this visitor")]
@@ -331,27 +331,27 @@ impl<'ast, 'a> boa_ast::visitor::Visitor<'ast> for MyVisitor<'a> {
         &mut self,
         node: &'ast BinaryInPrivate,
     ) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<BinaryInPrivate>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Conditional),"` with this visitor")]
     fn visit_conditional(&mut self, node: &'ast Conditional) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Conditional>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Await),"` with this visitor")]
     fn visit_await(&mut self, node: &'ast Await) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Await>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Yield),"` with this visitor")]
     fn visit_yield(&mut self, node: &'ast Yield) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Yield>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Parenthesized),"` with this visitor")]
     fn visit_parenthesized(&mut self, node: &'ast Parenthesized) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Parenthesized>())
     }
 
     #[doc = concat!("Visits a `",stringify!(ForLoopInitializer),"` with this visitor")]
@@ -359,7 +359,7 @@ impl<'ast, 'a> boa_ast::visitor::Visitor<'ast> for MyVisitor<'a> {
         &mut self,
         node: &'ast ForLoopInitializer,
     ) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<ForLoopInitializer>())
     }
 
     #[doc = concat!("Visits a `",stringify!(IterableLoopInitializer),"` with this visitor")]
@@ -367,32 +367,32 @@ impl<'ast, 'a> boa_ast::visitor::Visitor<'ast> for MyVisitor<'a> {
         &mut self,
         node: &'ast IterableLoopInitializer,
     ) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<IterableLoopInitializer>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Case),"` with this visitor")]
     fn visit_case(&mut self, node: &'ast Case) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Case>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Sym),"` with this visitor")]
     fn visit_sym(&mut self, node: &'ast Sym) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Sym>())
     }
 
     #[doc = concat!("Visits a `",stringify!(LabelledItem),"` with this visitor")]
     fn visit_labelled_item(&mut self, node: &'ast LabelledItem) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<LabelledItem>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Catch),"` with this visitor")]
     fn visit_catch(&mut self, node: &'ast Catch) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Catch>())
     }
 
     #[doc = concat!("Visits a `",stringify!(Finally),"` with this visitor")]
     fn visit_finally(&mut self, node: &'ast Finally) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<Finally>())
     }
 
     #[doc = concat!("Visits a `",stringify!(FormalParameter),"` with this visitor")]
@@ -400,12 +400,12 @@ impl<'ast, 'a> boa_ast::visitor::Visitor<'ast> for MyVisitor<'a> {
         &mut self,
         node: &'ast FormalParameter,
     ) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<FormalParameter>())
     }
 
     #[doc = concat!("Visits a `",stringify!(PropertyName),"` with this visitor")]
     fn visit_property_name(&mut self, node: &'ast PropertyName) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<PropertyName>())
     }
 
     #[doc = concat!("Visits a `",stringify!(MethodDefinition),"` with this visitor")]
@@ -413,17 +413,17 @@ impl<'ast, 'a> boa_ast::visitor::Visitor<'ast> for MyVisitor<'a> {
         &mut self,
         node: &'ast MethodDefinition,
     ) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<MethodDefinition>())
     }
 
     #[doc = concat!("Visits a `",stringify!(ObjectPattern),"` with this visitor")]
     fn visit_object_pattern(&mut self, node: &'ast ObjectPattern) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<ObjectPattern>())
     }
 
     #[doc = concat!("Visits a `",stringify!(ArrayPattern),"` with this visitor")]
     fn visit_array_pattern(&mut self, node: &'ast ArrayPattern) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<ArrayPattern>())
     }
 
     #[doc = concat!("Visits a `",stringify!(PropertyDefinition),"` with this visitor")]
@@ -431,7 +431,7 @@ impl<'ast, 'a> boa_ast::visitor::Visitor<'ast> for MyVisitor<'a> {
         &mut self,
         node: &'ast PropertyDefinition,
     ) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<PropertyDefinition>())
     }
 
     #[doc = concat!("Visits a `",stringify!(TemplateElement),"` with this visitor")]
@@ -439,7 +439,7 @@ impl<'ast, 'a> boa_ast::visitor::Visitor<'ast> for MyVisitor<'a> {
         &mut self,
         node: &'ast TemplateElement,
     ) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<TemplateElement>())
     }
 
     #[doc = concat!("Visits a `",stringify!(SimplePropertyAccess),"` with this visitor")]
@@ -447,7 +447,7 @@ impl<'ast, 'a> boa_ast::visitor::Visitor<'ast> for MyVisitor<'a> {
         &mut self,
         node: &'ast SimplePropertyAccess,
     ) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<SimplePropertyAccess>())
     }
 
     #[doc = concat!("Visits a `",stringify!(PrivatePropertyAccess),"` with this visitor")]
@@ -455,7 +455,7 @@ impl<'ast, 'a> boa_ast::visitor::Visitor<'ast> for MyVisitor<'a> {
         &mut self,
         node: &'ast PrivatePropertyAccess,
     ) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<PrivatePropertyAccess>())
     }
 
     #[doc = concat!("Visits a `",stringify!(SuperPropertyAccess),"` with this visitor")]
@@ -463,7 +463,7 @@ impl<'ast, 'a> boa_ast::visitor::Visitor<'ast> for MyVisitor<'a> {
         &mut self,
         node: &'ast SuperPropertyAccess,
     ) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<SuperPropertyAccess>())
     }
 
     #[doc = concat!("Visits a `",stringify!(OptionalOperation),"` with this visitor")]
@@ -471,12 +471,12 @@ impl<'ast, 'a> boa_ast::visitor::Visitor<'ast> for MyVisitor<'a> {
         &mut self,
         node: &'ast OptionalOperation,
     ) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<OptionalOperation>())
     }
 
     #[doc = concat!("Visits a `",stringify!(AssignTarget),"` with this visitor")]
     fn visit_assign_target(&mut self, node: &'ast AssignTarget) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<AssignTarget>())
     }
 
     #[doc = concat!("Visits a `",stringify!(ObjectPatternElement),"` with this visitor")]
@@ -484,7 +484,7 @@ impl<'ast, 'a> boa_ast::visitor::Visitor<'ast> for MyVisitor<'a> {
         &mut self,
         node: &'ast ObjectPatternElement,
     ) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<ObjectPatternElement>())
     }
 
     #[doc = concat!("Visits a `",stringify!(ArrayPatternElement),"` with this visitor")]
@@ -492,7 +492,7 @@ impl<'ast, 'a> boa_ast::visitor::Visitor<'ast> for MyVisitor<'a> {
         &mut self,
         node: &'ast ArrayPatternElement,
     ) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<ArrayPatternElement>())
     }
 
     #[doc = concat!("Visits a `",stringify!(PropertyAccessField),"` with this visitor")]
@@ -500,7 +500,7 @@ impl<'ast, 'a> boa_ast::visitor::Visitor<'ast> for MyVisitor<'a> {
         &mut self,
         node: &'ast PropertyAccessField,
     ) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<PropertyAccessField>())
     }
 
     #[doc = concat!("Visits a `",stringify!(OptionalOperationKind),"` with this visitor")]
@@ -508,17 +508,17 @@ impl<'ast, 'a> boa_ast::visitor::Visitor<'ast> for MyVisitor<'a> {
         &mut self,
         node: &'ast OptionalOperationKind,
     ) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<OptionalOperationKind>())
     }
 
     #[doc = concat!("Visits a `",stringify!(ModuleItemList),"` with this visitor")]
     fn visit_module_item_list(&mut self, node: &'ast ModuleItemList) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<ModuleItemList>())
     }
 
     #[doc = concat!("Visits a `",stringify!(ModuleItem),"` with this visitor")]
     fn visit_module_item(&mut self, node: &'ast ModuleItem) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<ModuleItem>())
     }
 
     #[doc = concat!("Visits a `",stringify!(ModuleSpecifier),"` with this visitor")]
@@ -526,12 +526,12 @@ impl<'ast, 'a> boa_ast::visitor::Visitor<'ast> for MyVisitor<'a> {
         &mut self,
         node: &'ast ModuleSpecifier,
     ) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<ModuleSpecifier>())
     }
 
     #[doc = concat!("Visits a `",stringify!(ImportKind),"` with this visitor")]
     fn visit_import_kind(&mut self, node: &'ast ImportKind) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<ImportKind>())
     }
 
     #[doc = concat!("Visits a `",stringify!(ImportDeclaration),"` with this visitor")]
@@ -539,7 +539,7 @@ impl<'ast, 'a> boa_ast::visitor::Visitor<'ast> for MyVisitor<'a> {
         &mut self,
         node: &'ast ImportDeclaration,
     ) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<ImportDeclaration>())
     }
 
     #[doc = concat!("Visits a `",stringify!(ImportSpecifier),"` with this visitor")]
@@ -547,12 +547,12 @@ impl<'ast, 'a> boa_ast::visitor::Visitor<'ast> for MyVisitor<'a> {
         &mut self,
         node: &'ast ImportSpecifier,
     ) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<ImportSpecifier>())
     }
 
     #[doc = concat!("Visits a `",stringify!(ReExportKind),"` with this visitor")]
     fn visit_re_export_kind(&mut self, node: &'ast ReExportKind) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<ReExportKind>())
     }
 
     #[doc = concat!("Visits a `",stringify!(ExportDeclaration),"` with this visitor")]
@@ -560,7 +560,7 @@ impl<'ast, 'a> boa_ast::visitor::Visitor<'ast> for MyVisitor<'a> {
         &mut self,
         node: &'ast ExportDeclaration,
     ) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<ExportDeclaration>())
     }
 
     #[doc = concat!("Visits a `",stringify!(ExportSpecifier),"` with this visitor")]
@@ -568,7 +568,7 @@ impl<'ast, 'a> boa_ast::visitor::Visitor<'ast> for MyVisitor<'a> {
         &mut self,
         node: &'ast ExportSpecifier,
     ) -> ControlFlow<Self::BreakTy> {
-        node.visit_with(self)
+        ControlFlow::Break(std::any::type_name::<ExportSpecifier>())
     }
 
     fn visit<N: Into<boa_ast::visitor::NodeRef<'ast>>>(
