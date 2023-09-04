@@ -1,5 +1,5 @@
 [package]
-name = "js2rs"
+name = "js2rhai"
 version = "0.1.0"
 edition = "2021"
 
@@ -10,10 +10,5 @@ anyhow = "1.0.75"
 boa_ast = "0.17.0"
 boa_interner = "0.17.0"
 boa_parser = "0.17.0"
-proc-macro2 = { version = "1.0.66", default-features = false }
-syn = { version = "2.0.30", features = [
-    "full",
-    "parsing",
-    "printing",
-    "extra-traits",
-], default-features = false }
+rhai = { version = "1.15.1", features = ["internals"] }
+smallvec = "1.11.0"
