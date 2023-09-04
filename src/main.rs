@@ -1,12 +1,16 @@
+use std::collections::BTreeMap;
+
 use anyhow::{bail, Context as _};
 use boa_ast::{
     declaration::{Binding, VarDeclaration, Variable, VariableList},
     expression::{
-        literal::{ArrayLiteral, Literal},
-        operator::{binary::BinaryOp, Binary},
+        access::{PropertyAccess, PropertyAccessField},
+        literal::{ArrayLiteral, Literal, ObjectLiteral},
+        operator::{binary::BinaryOp, Assign, Binary},
         Call, Identifier,
     },
-    statement::If,
+    property::{PropertyDefinition, PropertyName},
+    statement::{Block, If},
     Expression, Script, Statement, StatementList, StatementListItem,
 };
 use boa_interner::Sym;
@@ -62,17 +66,19 @@ impl Map<'_> {
         node: &StatementListItem,
     ) -> anyhow::Result<Vec<rhai::Stmt>> {
         match node {
-            StatementListItem::Statement(node) => self.map_statment(node),
+            StatementListItem::Statement(node) => self.map_statement(node),
             StatementListItem::Declaration(node) => unsupported!(node),
         }
     }
-    fn map_statment(&mut self, node: &Statement) -> anyhow::Result<Vec<rhai::Stmt>> {
+    fn map_statement(&mut self, node: &Statement) -> anyhow::Result<Vec<rhai::Stmt>> {
         match node {
             Statement::Var(node) => self.map_var_declaration(node),
-            Statement::Block(_) => unsupported!(node),
+            Statement::Block(node) => self.map_block(node).map(|s| vec![s]),
             Statement::Empty => unsupported!(node),
-            Statement::Expression(_) => unsupported!(node),
-            Statement::If(node) => unsupported!(node),
+            Statement::Expression(node) => self
+                .map_expression(node)
+                .map(|e| vec![rhai::Stmt::Expr(Box::new(e))]),
+            Statement::If(node) => self.map_if(node).map(|s| vec![s]),
             Statement::DoWhileLoop(_) => unsupported!(node),
             Statement::WhileLoop(_) => unsupported!(node),
             Statement::ForLoop(_) => unsupported!(node),
@@ -88,8 +94,27 @@ impl Map<'_> {
             Statement::With(_) => unsupported!(node),
         }
     }
+    fn map_block(&mut self, node: &Block) -> anyhow::Result<rhai::Stmt> {
+        let stmt_list = node.statement_list();
+        Ok(rhai::Stmt::Block(Box::new(rhai::StmtBlock::new_with_span(
+            self.map_statement_list(stmt_list)?,
+            rhai::Span::NONE,
+        ))))
+    }
     fn map_if(&mut self, node: &If) -> anyhow::Result<rhai::Stmt> {
-        todo!()
+        let (cond, body, els) = (node.cond(), node.body(), node.else_node());
+        Ok(rhai::Stmt::If(
+            Box::new(rhai::FlowControl {
+                expr: self.map_expression(cond)?,
+                body: rhai::StmtBlock::new_with_span(self.map_statement(body)?, rhai::Span::NONE),
+                branch: els
+                    .map(|it| self.map_statement(it))
+                    .transpose()?
+                    .map(|stmts| rhai::StmtBlock::new_with_span(stmts, rhai::Span::NONE))
+                    .unwrap_or(rhai::StmtBlock::NONE),
+            }),
+            rhai::Position::NONE,
+        ))
     }
     fn map_var_declaration(&mut self, node: &VarDeclaration) -> anyhow::Result<Vec<rhai::Stmt>> {
         let VarDeclaration(node) = node;
@@ -121,7 +146,7 @@ impl Map<'_> {
             Expression::Literal(node) => self.map_literal(node),
             Expression::This => unsupported!(node),
             Expression::ArrayLiteral(node) => self.map_array_literal(node),
-            Expression::ObjectLiteral(_) => unsupported!(node),
+            Expression::ObjectLiteral(node) => self.map_object_literal(node),
             Expression::Spread(_) => unsupported!(node),
             Expression::Function(_) => unsupported!(node),
             Expression::ArrowFunction(_) => unsupported!(node),
@@ -140,7 +165,12 @@ impl Map<'_> {
             Expression::TaggedTemplate(_) => unsupported!(node),
             Expression::NewTarget => unsupported!(node),
             Expression::ImportMeta => unsupported!(node),
-            Expression::Assign(_) => unsupported!(node),
+            Expression::Assign(node) => self.map_assign(node).map(|it| {
+                rhai::Expr::Stmt(Box::new(rhai::StmtBlock::new_with_span(
+                    std::iter::once(it),
+                    rhai::Span::NONE,
+                )))
+            }),
             Expression::Unary(_) => unsupported!(node),
             Expression::Update(_) => unsupported!(node),
             Expression::Binary(node) => self.map_binary(node),
@@ -151,6 +181,82 @@ impl Map<'_> {
             Expression::Parenthesized(_) => unsupported!(node),
             _ => unsupported!(node),
         }
+    }
+    fn map_object_literal(&mut self, node: &ObjectLiteral) -> anyhow::Result<rhai::Expr> {
+        let props = node.properties();
+        let mut to_dynamics = BTreeMap::new();
+        let mut to_exprs = smallvec::SmallVec::new();
+        for prop in props {
+            match prop {
+                PropertyDefinition::Property(PropertyName::Literal(sym), val) => {
+                    let sym = self.resolve(*sym)?;
+
+                    let ident = rhai::Ident {
+                        name: rhai::ImmutableString::from(&sym),
+                        pos: rhai::Position::NONE,
+                    };
+                    let identifier = rhai::Identifier::from(sym);
+
+                    to_exprs.push((ident, self.map_expression(val)?));
+                    to_dynamics.insert(identifier, rhai::Dynamic::UNIT);
+                }
+                PropertyDefinition::Property(PropertyName::Computed(_), _)
+                | PropertyDefinition::IdentifierReference(_)
+                | PropertyDefinition::MethodDefinition(_, _)
+                | PropertyDefinition::SpreadObject(_)
+                | PropertyDefinition::CoverInitializedName(_, _) => {
+                    unsupported!(prop, "object literal property definition")
+                }
+            }
+        }
+        Ok(rhai::Expr::Map(
+            Box::new((to_exprs, to_dynamics)),
+            rhai::Position::NONE,
+        ))
+    }
+    fn map_assign(&mut self, node: &Assign) -> anyhow::Result<rhai::Stmt> {
+        use boa_ast::expression::operator::assign::{AssignOp, AssignTarget};
+
+        let (lhs, op, rhs) = (node.lhs(), node.op(), node.rhs());
+        let op: rhai::OpAssignment = match op {
+            AssignOp::Assign => rhai::OpAssignment::new_assignment(rhai::Position::NONE),
+            other => {
+                let token = match other {
+                    AssignOp::Assign => unreachable!("already filtered out"),
+                    AssignOp::Add => rhai::Token::PlusAssign,
+                    AssignOp::Sub => rhai::Token::MinusAssign,
+                    AssignOp::Mul => rhai::Token::MultiplyAssign,
+                    AssignOp::Div => rhai::Token::DivideAssign,
+                    AssignOp::Mod => rhai::Token::ModuloAssign,
+                    AssignOp::Exp => rhai::Token::PowerOfAssign,
+                    AssignOp::And => rhai::Token::AndAssign,
+                    AssignOp::Or => rhai::Token::OrAssign,
+                    AssignOp::Xor => rhai::Token::XOrAssign,
+                    AssignOp::Shl => rhai::Token::LeftShiftAssign,
+                    AssignOp::Shr => rhai::Token::RightShiftAssign,
+                    AssignOp::Ushr => unsupported!(op),
+                    AssignOp::Coalesce => unsupported!(op),
+                    // BUG? you'd think these would be fine, but they'd panic the below call too...
+                    AssignOp::BoolAnd => unsupported!(op),
+                    AssignOp::BoolOr => unsupported!(op),
+                    // AssignOp::BoolAnd => rhai::Token::AndAssign,
+                    // AssignOp::BoolOr => rhai::Token::OrAssign,
+                };
+                // this panics if given Token::Equals...
+                rhai::OpAssignment::new_op_assignment_from_token(token, rhai::Position::NONE)
+            }
+        };
+        Ok(rhai::Stmt::Assignment(Box::new((
+            op,
+            rhai::BinaryExpr {
+                lhs: match lhs {
+                    AssignTarget::Identifier(node) => self.map_identifier_to_expr(node)?,
+                    AssignTarget::Access(node) => unsupported!(node, "assignment to a property"),
+                    AssignTarget::Pattern(node) => unsupported!(node, "assignment to a pattern"),
+                },
+                rhs: self.map_expression(rhs)?,
+            },
+        ))))
     }
     fn map_binary(&mut self, node: &Binary) -> anyhow::Result<rhai::Expr> {
         let (lhs, op, rhs) = (node.lhs(), node.op(), node.rhs());
@@ -185,8 +291,8 @@ impl Map<'_> {
                 BitwiseOp::Or => rhai::Token::Or,
                 BitwiseOp::Xor => rhai::Token::XOr,
                 BitwiseOp::Shl => rhai::Token::LeftShift,
-                BitwiseOp::Shr => unsupported!(op, "sign-propogating right-shift"),
-                BitwiseOp::UShr => rhai::Token::RightShift,
+                BitwiseOp::Shr => rhai::Token::RightShift,
+                BitwiseOp::UShr => unsupported!(op),
             }),
             BinaryOp::Relational(op) => Ok(match op {
                 RelationalOp::Equal => rhai::Token::EqualsTo,
@@ -224,25 +330,50 @@ impl Map<'_> {
     }
     fn map_call(&mut self, node: &Call) -> anyhow::Result<rhai::Expr> {
         let (function, args) = (node.function(), node.args());
-        let Expression::Identifier(identifier) = function else {
-            unsupported!(function, "call to non-bare function")
-        };
-        Ok(rhai::Expr::FnCall(
-            Box::new(rhai::FnCallExpr {
-                namespace: rhai::Namespace::NONE,
-                name: self
-                    .resolve(identifier.sym())
-                    .map(rhai::ImmutableString::from)?,
-                hashes: rhai::FnCallHashes::from_hash(0),
-                args: args
-                    .iter()
-                    .map(|arg| self.map_expression(arg))
-                    .collect::<Result<_, _>>()?,
-                capture_parent_scope: true,
-                op_token: None,
-            }),
-            rhai::Position::NONE,
-        ))
+        let args = args
+            .iter()
+            .map(|arg| self.map_expression(arg))
+            .collect::<Result<_, _>>()?;
+        match function {
+            Expression::Identifier(identifier) => Ok(rhai::Expr::FnCall(
+                Box::new(rhai::FnCallExpr {
+                    namespace: rhai::Namespace::NONE,
+                    name: self
+                        .resolve(identifier.sym())
+                        .map(rhai::ImmutableString::from)?,
+                    hashes: rhai::FnCallHashes::from_hash(0),
+                    args,
+                    capture_parent_scope: true,
+                    op_token: None,
+                }),
+                rhai::Position::NONE,
+            )),
+            Expression::PropertyAccess(PropertyAccess::Simple(node)) => {
+                let (target, field) = (node.target(), node.field());
+                let PropertyAccessField::Const(method) = field else {
+                    unsupported!(field, "method call")
+                };
+                Ok(rhai::Expr::Dot(
+                    Box::new(rhai::BinaryExpr {
+                        lhs: self.map_expression(target)?,
+                        rhs: rhai::Expr::MethodCall(
+                            Box::new(rhai::FnCallExpr {
+                                namespace: rhai::Namespace::NONE,
+                                name: self.resolve(*method).map(rhai::ImmutableString::from)?,
+                                hashes: rhai::FnCallHashes::from_hash(0),
+                                args,
+                                capture_parent_scope: false,
+                                op_token: None,
+                            }),
+                            rhai::Position::NONE,
+                        ),
+                    }),
+                    rhai::ASTFlags::empty(),
+                    rhai::Position::NONE,
+                ))
+            }
+            other => unsupported!(other, "fn call"),
+        }
     }
     fn map_array_literal(&mut self, node: &ArrayLiteral) -> anyhow::Result<rhai::Expr> {
         let (has_trailing_comma_spread, items) = (node.has_trailing_comma_spread(), node.as_ref());
@@ -316,4 +447,30 @@ fn main() {
     .map_script(&js)
     .unwrap();
     dbg!(&mapped);
+}
+
+#[test]
+fn test() {
+    let ast = rhai::Engine::new()
+        .set_optimization_level(rhai::OptimizationLevel::None)
+        .compile(
+            r#"
+        #{
+            name: "Score",
+            value: score,
+            value_text: "points",
+            message: "2HELPS2B Score",
+        }
+        "#,
+        )
+        .unwrap();
+    assert_eq!(ast.statements().len(), 1);
+    let rhai::Stmt::Expr(expr) = &ast.statements()[0] else {
+        panic!()
+    };
+    let rhai::Expr::Map(map, _pos) = &**expr else {
+        panic!()
+    };
+    let (l, r) = &**map;
+    dbg!(l, r);
 }
